@@ -2,6 +2,10 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Resource, Api
 
+# for testing
+import os 
+
+
 app = Flask(__name__)
 api = Api(app)
 
@@ -9,6 +13,10 @@ api = Api(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///tasks.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
+
+# Use an in-memory database for testing
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:" if os.getenv("FLASK_ENV") == "testing" else "sqlite:///tasks.db"
+app.config["TESTING"] = os.getenv("FLASK_ENV") == "testing"
 
 # Define Task Model
 class Task(db.Model):
